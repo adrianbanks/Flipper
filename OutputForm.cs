@@ -25,7 +25,27 @@ namespace Flipper
         private void timer_Tick(object sender, EventArgs e)
         {
             Image screenShot = captureForm.CaptureScreenShot();
-            flippedPictureBox.Image = Flip(screenShot);
+
+            RotateFlipType flipType = RotateFlipType.RotateNoneFlipNone;
+
+            if (invertToolStripMenuItem.Checked)
+            {
+                flipType = RotateFlipType.Rotate180FlipX;
+            }
+            else if (rotate90DegToolStripMenuItem.Checked)
+            {
+                flipType = RotateFlipType.Rotate90FlipNone;
+            }
+            else if (rotate180DegToolStripMenuItem.Checked)
+            {
+                flipType = RotateFlipType.Rotate180FlipNone;
+            }
+            else if (rotate270DegToolStripMenuItem.Checked)
+            {
+                flipType = RotateFlipType.Rotate270FlipNone;
+            }
+
+            flippedPictureBox.Image = ProcessImage(screenShot, flipType);
         }
 
         private void copyToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
@@ -59,11 +79,39 @@ namespace Flipper
         {
             UpdateSpeed(Speed.Fast);
         }
-         
-        private static Image Flip(Image image)
+
+        private void invertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetFlipTypeMenuStates(invert : true);
+        }
+
+        private void rotate90DegToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetFlipTypeMenuStates(rotate90 : true);
+        }
+
+        private void rotate180DegToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetFlipTypeMenuStates(rotate180 : true);
+        }
+
+        private void rotate270DegToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetFlipTypeMenuStates(rotate270 : true);
+        }
+
+        private void SetFlipTypeMenuStates(bool invert = false, bool rotate90 = false, bool rotate180 = false, bool rotate270 = false)
+        {
+            invertToolStripMenuItem.Checked = invert;
+            rotate90DegToolStripMenuItem.Checked = rotate90;
+            rotate180DegToolStripMenuItem.Checked = rotate180;
+            rotate270DegToolStripMenuItem.Checked = rotate270;
+        }
+
+        private static Image ProcessImage(Image image, RotateFlipType rotateFlipType)
         {
 	        Image flipped = (Image) image.Clone();
-            flipped.RotateFlip(RotateFlipType.Rotate180FlipX);
+            flipped.RotateFlip(rotateFlipType);
             return flipped;
         }
 
